@@ -4,20 +4,28 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git ''
+                git 'https://github.com/Ritesh-Prasad/demo-web.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t devopsbyritesh:v1 .'
+                sh 'docker build -t devopsbyritesh .'
             }
         }
 
-        stage('Run Container') {
-            steps {
-                sh 'docker run -d -p 8080:80 --name devops-site devopsbyritesh:v1 || true'
+        stage('Tag & Push'){
+            steps{
+                withDockerRegistry(credentialsId: 'dockerhub', url: 'https://index.docker.io/v1/') {
+                    sh 'docker tag devopsbyritesh riteshprasad07/devopsbyritesh:v1'
+                    sh 'docker push riteshprasad07/devopsbyritesh:v1'
+                }
             }
         }
     }
 }
+
+
+
+
+
